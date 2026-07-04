@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quranic Arabic Grammar Mastery Course</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --primary-color: #0f766e;
+            --primary-hover: #115e59;
+            --accent-bg: #f0fdfa;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .module-title {
+            font-size: 1.5rem;
+            color: #0f172a;
+            margin: 2.5rem 0 1.25rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #0f172a;
+            padding-right: 0.5rem;
+        }
+
+        .arabic-badge {
+            font-family: 'Amiri', serif;
+            font-size: 1.25rem;
+            background: var(--accent-bg);
+            color: var(--primary-color);
+            padding: 0.2rem 0.75rem;
+            border-radius: 20px;
+            white-space: nowrap;
+            direction: rtl;
+        }
+
+        .card-body {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-body ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .card-body li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.25rem;
+        }
+
+        .card-body li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .btn-explore {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background-color 0.15s ease;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-explore:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-explore svg {
+            margin-left: 0.5rem;
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Quranic Arabic Grammar</h1>
+        <p>A structured curriculum designed to bridge the gap between linguistic rules and live Quranic text.</p>
+    </header>
+
+    <!-- MODULE 1 -->
+    <h2 class="module-title">📋 Module 1: The Anatomy of Nouns (Ism)</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Definite vs Indefinite</div>
+                <span class="arabic-badge">الـ</span>
+            </div>
+            <div class="card-body">
+                <p>Understanding clarity and indefiniteness in Arabic nouns, including the structural impacts of solar and lunar letters.</p>
+            </div>
+            <a href="render.html?rule=definite_indefinite" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Gender Concordance</div>
+                <span class="arabic-badge">مذكر / مؤنث</span>
+            </div>
+            <div class="card-body">
+                <p>Identifying real vs. grammatical gender and recognizing common functional signs of femininity inside the text.</p>
+            </div>
+            <a href="render.html?rule=gender_concordance" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Noun Plurality</div>
+                <span class="arabic-badge">مفرد، مثنى، جمع</span>
+            </div>
+            <div class="card-body">
+                <p>Mastering singular, dual, and plural structural types, including sound masculine/feminine endings and broken plurals.</p>
+            </div>
+            <a href="render.html?rule=noun_plurality" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <h2 class="module-title">📋 Module 2: Pointers & Connectors</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Detached Pronouns</div>
+                <span class="arabic-badge">هو، هي، أنت، أنا...</span>
+            </div>
+            <div class="card-body">
+                <p>Isolating independent subject pronouns used prominently across verses for structural emphasis and clarity.</p>
+            </div>
+            <a href="render.html?rule=detached_pronouns" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Attached Pronouns</div>
+                <span class="arabic-badge">-ه، -ها، -ك، -ي...</span>
+            </div>
+            <div class="card-body">
+                <p>Tracking dependent suffix pronouns attached to nouns (possession), verbs (objects), or interactive particles.</p>
+            </div>
+            <a href="render.html?rule=attached_pronouns" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Demonstratives & Questions</div>
+                <span class="arabic-badge">هذا، من، كيف...</span>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Pointers:</strong> هذا، هذه، ذلك، تلك</li>
+                    <li><strong>Interrogatives:</strong> من، ما، أين، كيف، لماذا</li>
+                </ul>
+            </div>
+            <a href="render.html?rule=demonstratives_questions" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <h2 class="module-title">📋 Module 3: Particles & Phrases</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Prepositions</div>
+                <span class="arabic-badge">Huruf al-Jarr</span>
+            </div>
+            <div class="card-body">
+                <p>Governing particles that shift target following nouns directly into the structural genitive (Majrur) state.</p>
+            </div>
+            <a href="render.html?rule=prepositions" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Accusative Particles</div>
+                <span class="arabic-badge">Huruf al-Nasb</span>
+            </div>
+            <div class="card-body">
+                <p>Analyzing formatting shifts triggered by emphasis elements like Inna and its grammatical structural sisters.</p>
+            </div>
+            <a href="render.html?rule=accusative_particles" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Adjectives</div>
+                <span class="arabic-badge">Sifah Phrases</span>
+            </div>
+            <div class="card-body">
+                <p>Four-point linguistic agreement matching systems governing nouns (Mawsuf) and their direct qualifying adjectives.</p>
+            </div>
+            <a href="render.html?rule=adjectives" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Possession Constructs</div>
+                <span class="arabic-badge">Idafa Phrases</span>
+            </div>
+            <div class="card-body">
+                <p>Deconstructing structural components belonging to the possessed (Mudaf) and base possessor (Mudaf Ilayh) metrics.</p>
+            </div>
+            <a href="render.html?rule=possession_constructs" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </div>
+
+
+        <!-- MODULE 4 -->
+    <h2 class="module-title">📋 Module 4: The Verbal System (Fi'l)</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Verbal Sentence Structure</div>
+                <span class="arabic-badge">Rafa & Nasb</span>
+            </div>
+            <div class="card-body">
+                <p>Tracking the structural subject (Fa'il) in nominative states vs. direct object parameters (Maf'ul) inside actions.</p>
+            </div>
+            <a href="render.html?rule=verbal_sentence" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Past Conjugation</div>
+                <span class="arabic-badge">الماضي</span>
+            </div>
+            <div class="card-body">
+                <p>Suffix-centric pattern analysis establishing historically completed indicators across pronoun groups.</p>
+            </div>
+            <a href="render.html?rule=past_conjugation" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Present Conjugation</div>
+                <span class="arabic-badge">المضارع (Form 1)</span>
+            </div>
+            <div class="card-body">
+                <p>Linguistic prefix/suffix indicators highlighting contemporary or upcoming occurrences within ground roots.</p>
+            </div>
+            <a href="render.html?rule=present_conjugation" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Imperative Commands</div>
+                <span class="arabic-badge">الأمر (Form 1)</span>
+            </div>
+            <div class="card-body">
+                <p>Extracting rules formatting direct active voice instructions derived cleanly from structural prefixes.</p>
+            </div>
+            <a href="render.html?rule=imperative_commands" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Prohibitions</div>
+                <span class="arabic-badge">النهي (Form 2)</span>
+            </div>
+            <div class="card-body">
+                <p>Constructing restricted actions cleanly utilizes structural preventative indicators paired with active verbal parameters.</p>
+            </div>
+            <a href="render.html?rule=prohibitions" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Verb Altering Particles</div>
+                <span class="arabic-badge">لن، لم، أن، كي</span>
+            </div>
+            <div class="card-body">
+                <p>Identifying functional triggers forcing target present tense endings directly into Subjunctive or Jussive shapes.</p>
+            </div>
+            <a href="render.html?rule=verb_altering_particles" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <h2 class="module-title">📋 Module 5: Advanced Morphology (Sarf)</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Haft Iqsaam</div>
+                <span class="arabic-badge">Seven Root Types</span>
+            </div>
+            <div class="card-body">
+                <p>Root sorting classes dividing terms dynamically depending on structural vulnerabilities or weak vowel presence.</p>
+            </div>
+            <a href="render.html?rule=haft_iqsaam" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Derived Verb Forms</div>
+                <span class="arabic-badge">الأوزان</span>
+            </div>
+            <div class="card-body">
+                <p>Expanding baseline definitions systematically through elevated template matrices (Forms II through X).</p>
+            </div>
+            <a href="render.html?rule=derived_verbs" class="btn-explore">Explore live in Quran <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

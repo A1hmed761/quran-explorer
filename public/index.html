@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Document Q&A</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; background: #f9f9f9; color: #333; }
+        label { font-weight: bold; display: block; margin-top: 20px; margin-bottom: 5px; }
+        textarea, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        textarea { height: 150px; resize: vertical; }
+        button { background: #007bff; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 15px; width: 100%; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #output-box { display: none; background: #fff; padding: 20px; border-radius: 6px; border-left: 5px solid #007bff; margin-top: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .loader { display: none; text-align: center; margin-top: 15px; font-style: italic; color: #666; }
+    </style>
+</head>
+<body>
+
+    <h2>Gemini Q&A Assistant</h2>
+    <p>Paste your text source below and ask a question based on it.</p>
+
+    <label for="sourceText">Source Text:</label>
+    <textarea id="sourceText" placeholder="Paste the reference document or article here..."></textarea>
+
+    <label for="question">Your Question:</label>
+    <input type="text" id="question" placeholder="e.g., What is the launch date?">
+
+    <button id="submitBtn" onclick="askGemini()">Ask Gemini</button>
+    
+    <div id="loader" class="loader">Thinking...</div>
+
+    <div id="output-box">
+        <strong>Answer:</strong>
+        <p id="answerText" style="white-space: pre-wrap; margin-top: 10px; line-height: 1.5;"></p>
+    </div>
+
+    <script>
+        async function askGemini() {
+            const sourceText = document.getElementById('sourceText').value;
+            const question = document.getElementById('question').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const loader = document.getElementById('loader');
+            const outputBox = document.getElementById('output-box');
+            const answerText = document.getElementById('answerText');
+
+            if (!sourceText.trim() || !question.trim()) {
+                alert("Please fill out both fields!");
+                return;
+            }
+
+            // UI loading state
+            submitBtn.disabled = true;
+            loader.style.display = 'block';
+            outputBox.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sourceText, question })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    answerText.textContent = data.answer;
+                    outputBox.style.display = 'block';
+                } else {
+                    alert("Error: " + (data.error || "Failed to fetch response"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Network error. Make sure your server is running.");
+            } finally {
+                submitBtn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

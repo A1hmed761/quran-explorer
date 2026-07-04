@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Noble Qur'an Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="highlightMenu" class="highlight-menu">
+        <button onclick="openAiChat()">✨ Ask Gemini</button>
+    </div>
+
+    <div id="chatDrawer" class="chat-drawer">
+        <div class="chat-header">
+            <h3>Study with Gemini</h3>
+            <button class="close-btn" onclick="closeAiChat()">✕</button>
+        </div>
+        <div class="chat-context">
+            <strong>Selected Text:</strong>
+            <p id="contextTextPreview"></p>
+        </div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chatQuestionInput" placeholder="Ask about this selection...">
+            <button id="sendQuestionBtn" onclick="submitAiQuestion()">Send</button>
+        </div>
+    </div>
+
+    <main class="reader-container">
+        <section class="navigation-dashboard">
+            <div class="search-row">
+                <select id="surahSelect" class="nav-dropdown">
+                    <option value="" disabled selected>Select Surah...</option>
+                </select>
+                <div class="search-box-wrapper">
+                    <input type="number" id="smartSearchInput" min="1" placeholder="Enter Verse No. (e.g., 255)">
+                    <button id="searchBtn">Go</button>
+                </div>
+            </div>
+            <p class="search-hint">Select a Surah first, then type the verse number to jump straight to it.</p>
+        </section>
+
+        <header class="surah-header">
+            <h1 id="surahName">Choose a Surah</h1>
+            <p id="surahMeta">Select a chapter from above to begin reading</p>
+            <div class="bismillah" id="bismillahText" style="display: none;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        </header>
+
+        <div id="quranGrid" class="quran-grid"></div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
