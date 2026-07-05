@@ -11,14 +11,12 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
 }
 
 .reader-container {
     max-width: 768px; /* Classic book-width constraint for focus */
     margin: 0 auto;
     padding: 40px 20px;
-    box-sizing: border-box;
 }
 
 /* Header Styling */
@@ -47,39 +45,31 @@ body {
 .quran-grid {
     direction: rtl; /* Crucial for Right-to-Left reading flow */
     text-align: justify; /* Aligns edges beautifully like a real page */
-    position: relative;
-    user-select: none; /* Controlled selections happen via our dynamic tool */
 }
 
 .verse-block {
     display: inline; /* Allows text to flow continuously like a paragraph */
     font-family: 'Amiri', serif;
     font-size: 2.2rem;
-    line-height: 2.5; /* Huge line height prevents accent overlaps */
+    line-height: 2.4; /* Huge line height prevents accent overlaps */
     word-spacing: 4px;
 }
 
-/* Dynamic Inline Word Wrapper */
-.quran-grid span[data-word-idx] {
+/* Individual word wrapper - needed for word-level selection & grammar highlights */
+.qword {
     display: inline-block;
-    padding: 0 2px;
-    margin: 0 1px;
+}
+
+.qword.selected {
+    background-color: #ffe999;
     border-radius: 4px;
-    transition: background-color 0.2s ease;
 }
 
-/* Selected Text Visual Highlighting Range */
-.quran-grid span[data-word-idx].active-selection {
-    background-color: rgba(197, 168, 128, 0.35) !important;
-    box-shadow: 0 0 0 2px rgba(197, 168, 128, 0.2);
-}
-
-/* "Sticks" Border Indicators */
-.quran-grid span[data-word-idx].stick-start {
-    border-right: 3px solid var(--text-ink) !important;
-}
-.quran-grid span[data-word-idx].stick-end {
-    border-left: 3px solid var(--text-ink) !important;
+.grammar-highlight {
+    background-color: #ffeb3b;
+    color: #000;
+    border-radius: 4px;
+    padding: 0 4px;
 }
 
 /* Beautiful End-of-Verse Number Badge */
@@ -88,64 +78,7 @@ body {
     color: var(--gold-accent);
     margin: 0 8px;
     font-family: 'Inter', sans-serif;
-    user-select: none;
-}
-
-/* Mobile AI Controller Hub Engine Box */
-.mobile-selector-panel {
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-}
-
-.slider-control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.slider-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.slider-row label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    min-width: 90px;
-    color: var(--text-muted);
-}
-
-.slider-row input[type="range"] {
-    flex: 1;
-    accent-color: var(--text-ink);
-    cursor: pointer;
-}
-
-/* Main Hub CTA Trigger */
-.ask-ai-trigger-btn {
-    width: 100%;
-    background: var(--text-ink);
-    color: #ffffff;
-    border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background 0.2s ease;
-}
-.ask-ai-trigger-btn:hover {
-    background: #3f3a36;
+    user-select: none; /* Prevents the user from accidentally highlighting the number */
 }
 
 /* Navigation Dashboard Layout */
@@ -154,7 +87,7 @@ body {
     border: 1px solid rgba(0,0,0,0.06);
     border-radius: 12px;
     padding: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 40px;
 }
 
 .search-row {
@@ -202,6 +135,7 @@ body {
     margin: 8px 0 0 0;
 }
 
+/* Highlight matching search target yellow */
 .highlight-target {
     background-color: #fef08a;
     border-radius: 4px;
@@ -212,7 +146,7 @@ body {
 .chat-drawer {
     position: fixed;
     top: 0;
-    right: -400px; 
+    right: -400px; /* Hidden completely by default offscreen right */
     width: 380px;
     height: 100vh;
     background: #ffffff;
@@ -223,7 +157,7 @@ body {
     z-index: 2000;
 }
 .chat-drawer.open {
-    right: 0; 
+    right: 0; /* Slides into display frame */
 }
 .chat-header {
     padding: 16px;
@@ -241,8 +175,6 @@ body {
     background: #f5f5f4;
     border-bottom: 1px solid #e7e5e4;
     font-size: 0.9rem;
-    max-height: 100px;
-    overflow-y: auto;
 }
 .chat-context p { margin: 4px 0 0 0; color: #444; font-style: italic; font-family: 'Amiri', serif; font-size: 1.2rem; direction: rtl;}
 
@@ -267,52 +199,113 @@ body {
 #chatQuestionInput { flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; }
 #sendQuestionBtn { background: #1c1917; color: white; border: none; padding: 0 16px; border-radius: 6px; cursor: pointer; }
 
-/* ==========================================
-   📱 RESPONSIVE RESPONSIVENESS MEDIA BREAKPOINTS
-   ========================================== */
-@media (max-width: 768px) {
-    .reader-container {
-        padding: 20px 12px;
-    }
-    
-    .navigation-dashboard {
-        padding: 12px;
-        margin-bottom: 16px;
-    }
-    
-    .search-row {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .search-box-wrapper {
-        width: 100%;
-    }
-    
-    /* Fluid Responsive Optimization for Reading Texts scales */
-    #surahName {
-        font-size: 2.2rem;
-    }
-    
-    .bismillah {
-        font-size: 1.6rem;
-        margin-top: 16px;
-    }
-    
-    .verse-block {
-        font-size: 1.65rem; /* Downsized gracefully so it fits perfectly on mobile layout screens */
-        line-height: 2.3;
-        word-spacing: 2px;
-    }
-    
-    .verse-number {
-        font-size: 1.1rem;
-        margin: 0 4px;
-    }
-    
-    /* Scale the drawer fully wide for standard mobile comfort */
-    .chat-drawer {
-        width: 100%;
-        right: -100%;
-    }
+/* ---------------------------------------------- */
+/* Ask AI - Floating Button + Drag Handle Selector */
+/* ---------------------------------------------- */
+
+.ask-ai-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, #c5a880, #a9895f);
+    color: #1c1917;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1500;
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+.ask-ai-fab.visible { display: flex; }
+.ask-ai-fab:active { transform: scale(0.97); }
+
+.selection-handle {
+    position: fixed;
+    width: 26px;
+    height: 26px;
+    background: #1c1917;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    z-index: 2100;
+    touch-action: none;
+    cursor: grab;
+    display: none;
+}
+.selection-handle.active { display: block; }
+/* Invisible larger hit-area so it's easy to grab on mobile without covering text */
+.selection-handle::after {
+    content: '';
+    position: absolute;
+    top: -14px; left: -14px; right: -14px; bottom: -14px;
+}
+
+.selection-toolbar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1c1917;
+    border-radius: 999px;
+    padding: 8px;
+    display: none;
+    gap: 8px;
+    z-index: 2100;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+.selection-toolbar.visible { display: flex; }
+.selection-toolbar button {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+}
+.selection-toolbar .btn-cancel { background: #44403c; color: #fff; }
+.selection-toolbar .btn-confirm { background: var(--gold-accent); color: #1c1917; }
+
+body.selection-mode .quran-grid {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ---------------------------------------------- */
+/* Mobile Responsiveness                          */
+/* ---------------------------------------------- */
+
+@media (max-width: 900px) {
+    .verse-block { font-size: 1.9rem; }
+}
+
+@media (max-width: 640px) {
+    .reader-container { padding: 24px 16px; }
+
+    #surahName { font-size: 2rem; }
+    .bismillah { font-size: 1.4rem; margin-top: 16px; }
+
+    .verse-block { font-size: 1.55rem; line-height: 2.3; word-spacing: 2px; }
+    .verse-number { font-size: 1.05rem; margin: 0 4px; }
+
+    .navigation-dashboard { padding: 12px; }
+    .search-row { flex-direction: column; }
+    .search-box-wrapper { flex-direction: row; }
+
+    .chat-drawer { width: 100%; right: -100%; }
+
+    .ask-ai-fab { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 0.9rem; }
+    .selection-toolbar { bottom: 16px; padding: 6px; }
+    .selection-toolbar button { padding: 9px 14px; font-size: 0.85rem; }
+}
+
+@media (max-width: 400px) {
+    .verse-block { font-size: 1.35rem; line-height: 2.2; }
+    #surahName { font-size: 1.7rem; }
 }

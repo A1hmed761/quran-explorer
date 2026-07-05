@@ -8,11 +8,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="highlightMenu" class="highlight-menu">
-        <button onclick="openAiChat()">✨ Ask Gemini</button>
+    <!-- Ask AI floating action button - shown once a surah is loaded -->
+    <button id="askAiFab" class="ask-ai-fab">✨ Ask AI</button>
+ 
+    <!-- Drag handles used to pick a word range to ask about -->
+    <div id="handleStart" class="selection-handle"></div>
+    <div id="handleEnd" class="selection-handle"></div>
+ 
+    <!-- Confirm/cancel toolbar shown while picking text -->
+    <div id="selectionToolbar" class="selection-toolbar">
+        <button class="btn-cancel" onclick="cancelSelection()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmSelection()">Ask Gemini</button>
     </div>
-
+ 
     <div id="chatDrawer" class="chat-drawer">
         <div class="chat-header">
             <h3>Study with Gemini</h3>
@@ -28,7 +36,6 @@
             <button id="sendQuestionBtn" onclick="submitAiQuestion()">Send</button>
         </div>
     </div>
-
     <main class="reader-container">
         <section class="navigation-dashboard">
             <div class="search-row">
@@ -42,16 +49,13 @@
             </div>
             <p class="search-hint">Select a Surah first, then type the verse number to jump straight to it.</p>
         </section>
-
         <header class="surah-header">
             <h1 id="surahName">Choose a Surah</h1>
             <p id="surahMeta">Select a chapter from above to begin reading</p>
-            <div class="bismillah" id="bismillahText" style="display: none;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+            <div class="bismillah" id="bismillahText" style="display: none;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
         </header>
-
         <div id="quranGrid" class="quran-grid"></div>
     </main>
-
     <script src="app.js"></script>
 </body>
 </html>
