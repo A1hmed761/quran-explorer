@@ -1,4 +1,3 @@
-// A quick static array of English Surah Names to make the UI friendly
 const surahNames = [
     "Al-Fatihah","Al-Baqarah","Al-Imran","An-Nisa","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Tawbah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra","Al-Kahf","Maryam","Ta-Ha","Al-Anbiya","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Ash-Shu'ara","An-Naml","Al-Qasas","Al-Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba","Fatir","Ya-Sin","As-Saffat","Sad","Az-Zumar","Ghafir","Fussilat","Ash-Shura","Az-Zukhruf","Ad-Dukhan","Al-Jathiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adh-Dhariyat","At-Tur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hashr","Al-Mumtahanah","As-Saff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","At-Talaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddaththir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba","An-Nazi'at","Abasa","At-Takwir","Al-Infitar","Al-Mutaffifin","Al-Inshiqaq","Al-Buruj","At-Tariq","Al-A'la","Al-Ghashiyah","Al-Fajr","Al-Balad","Ash-Shams","Al-Layl","Ad-Duha","Ash-Sharh","At-Tin","Al-Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-Adiyat","Al-Qari'ah","At-Takathur","Al-Asr","Al-Humazah","Al-Fil","Quraysh","Al-Ma'un","Al-Kauthar","Al-Kafirun","An-Nasr","Al-Masad","Al-Ikhlas","Al-Falaq","An-Nas"
 ];
@@ -6,11 +5,13 @@ const surahNames = [
 const surahSelect = document.getElementById('surahSelect');
 const smartSearchInput = document.getElementById('smartSearchInput');
 const searchBtn = document.getElementById('searchBtn');
-const menu = document.getElementById('highlightMenu');
+const startSlider = document.getElementById('startSlider');
+const endSlider = document.getElementById('endSlider');
 
 let selectedSourceText = ""; 
+let totalWordsInSurah = 0;
 
-// 1. Setup Dropdown Navigation Content List
+// Setup Dropdown Navigation Content List
 surahNames.forEach((name, idx) => {
     const opt = document.createElement('option');
     opt.value = idx + 1;
@@ -33,7 +34,7 @@ function handleVerseJump() {
     loadLiveSurah(currentSurahId, verseNum);
 }
 
-// 2. Load Surah from Local MongoDB with Highlight Integration
+// Load Surah from Cloud Database with Selector Tokenization Engine
 async function loadLiveSurah(surahId, targetVerseNum = null) {
     try {
         const response = await fetch(`/api/surah/${surahId}`);
@@ -50,92 +51,107 @@ async function loadLiveSurah(surahId, targetVerseNum = null) {
         const grid = document.getElementById('quranGrid');
         grid.innerHTML = ""; 
 
-        // 🌟 DYNAMICALLY GET RULE FROM THE URL PARAMETERS
         const urlParams = new URLSearchParams(window.location.search);
-        // Fallback default rule to "definite_indefinite" if none is passed in URL
         const activeRule = urlParams.get('rule') || "definite_indefinite"; 
 
-        // Loop through your REAL MongoDB documents inside the browser
+        let wordGlobalCounter = 0;
+
+        // Loop through and assign unique tracking IDs to every single word token
         verses.forEach(ayah => {
-            const textSpan = document.createElement('span');
-            textSpan.className = 'verse-block';
+            const verseContainer = document.createElement('span');
+            verseContainer.className = 'verse-block';
             
-            // Check if the current verse has an array of indices for this specific active rule
+            const wordsArray = ayah.text.split(" ");
             const highlightIndices = (ayah.grammar_highlights && ayah.grammar_highlights[activeRule]) || null;
 
-            if (highlightIndices) {
-                // Split the text into individual words by spaces
-                const wordsArray = ayah.text.split(" ");
-                textSpan.innerHTML = ""; // Clear plain text to append word blocks
+            wordsArray.forEach((word, index) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.innerText = word + " ";
+                wordSpan.setAttribute('data-word-idx', wordGlobalCounter);
 
-                wordsArray.forEach((word, index) => {
-                    const wordSpan = document.createElement('span');
-                    wordSpan.innerText = word + " ";
+                // Re-apply database dynamic styling parameters
+                if (highlightIndices && highlightIndices.includes(index)) {
+                    wordSpan.style.borderBottom = '3px solid var(--gold-accent)';
+                }
 
-                    // Check if the current word's index matches our database highlights array
-                    if (highlightIndices.includes(index)) {
-                        wordSpan.style.backgroundColor = '#ffeb3b'; // Highlight yellow background
-                        wordSpan.style.color = '#000';              // Readable black text
-                        wordSpan.style.borderRadius = '4px';
-                        wordSpan.style.padding = '0 4px';
-                        wordSpan.style.display = 'inline-block';
-                    }
-                    textSpan.appendChild(wordSpan);
-                });
-            } else {
-                // Fallback default plain text rendering if no rule matching data array exists
-                textSpan.innerText = ayah.text;
-            }
+                verseContainer.appendChild(wordSpan);
+                wordGlobalCounter++;
+            });
 
             const numberSpan = document.createElement('span');
             numberSpan.className = 'verse-number';
             numberSpan.innerText = ` ﴿${ayah.verse}﴾ `;
 
             if (targetVerseNum && ayah.verse === targetVerseNum) {
-                textSpan.classList.add('highlight-target');
-                setTimeout(() => textSpan.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                verseContainer.classList.add('highlight-target');
+                setTimeout(() => verseContainer.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
             }
-            grid.appendChild(textSpan);
+            
+            grid.appendChild(verseContainer);
             grid.appendChild(numberSpan);
         });
+
+        // Initialize Slider Configurations based on current page word counts
+        totalWordsInSurah = wordGlobalCounter;
+        startSlider.max = totalWordsInSurah - 1;
+        endSlider.max = totalWordsInSurah - 1;
+        startSlider.value = 0;
+        endSlider.value = Math.min(10, totalWordsInSurah - 1); // Select a small chunk by default
+        
+        updateVisualSelectionHighlights();
+
     } catch (err) { 
         console.error("Error connecting to DB Stream:", err); 
         document.getElementById('surahName').innerText = "Server Offline";
     }
 }
 
-// 3. Floating Button Highlight Reader Track Event
-document.addEventListener('mouseup', () => {
-    const selection = window.getSelection();
-    const cleanText = selection.toString().trim();
+// Monitor Slider Modifications on both Mobile and PC
+startSlider.addEventListener('input', updateVisualSelectionHighlights);
+endSlider.addEventListener('input', updateVisualSelectionHighlights);
 
-    if (cleanText.length > 0) {
-        selectedSourceText = cleanText; 
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
+function updateVisualSelectionHighlights() {
+    let start = parseInt(startSlider.value);
+    let end = parseInt(endSlider.value);
 
-        menu.style.display = 'block';
-        menu.style.left = `${rect.left + window.scrollX + (rect.width / 2) - (menu.offsetWidth / 2)}px`;
-        menu.style.top = `${rect.top + window.scrollY - menu.offsetHeight - 10}px`;
-    } else {
-        menu.style.display = 'none';
+    // Swap normalization if user drags boundaries past each other
+    if (start > end) {
+        const temp = start;
+        start = end;
+        end = temp;
     }
-});
 
-// 4. Interactive Sidebar Interface Actions
+    const selectedWords = [];
+
+    // Clear previous selection states
+    document.querySelectorAll('[data-word-idx]').forEach(el => {
+        el.classList.remove('active-selection', 'stick-start', 'stick-end');
+        
+        const idx = parseInt(el.getAttribute('data-word-idx'));
+        if (idx >= start && idx <= end) {
+            el.classList.add('active-selection');
+            selectedWords.push(el.innerText.trim());
+
+            if (idx === start) el.classList.add('stick-start');
+            if (idx === end) el.classList.add('stick-end');
+        }
+    });
+
+    // Compile text string to send to Gemini
+    selectedSourceText = selectedWords.join(" ");
+}
+
 function openAiChat() {
+    if (!selectedSourceText) return alert("Use the sliders to select text first!");
     document.getElementById('contextTextPreview').innerText = selectedSourceText;
-    document.getElementById('chatMessages').innerHTML = ""; // Clear old message chains
+    document.getElementById('chatMessages').innerHTML = ""; 
     document.getElementById('chatDrawer').classList.add('open');
-    menu.style.display = 'none';
 }
 
 function closeAiChat() {
     document.getElementById('chatDrawer').classList.remove('open');
-    window.getSelection().removeAllRanges();
 }
 
-// 5. Submit Conversation Stream directly to Gemini Endpoint
 async function submitAiQuestion() {
     const inputField = document.getElementById('chatQuestionInput');
     const questionText = inputField.value.trim();
@@ -143,14 +159,12 @@ async function submitAiQuestion() {
 
     const messagesContainer = document.getElementById('chatMessages');
 
-    // Append User Question to Screen UI
     const userMsg = document.createElement('div');
     userMsg.className = 'msg user';
     userMsg.innerText = questionText;
     messagesContainer.appendChild(userMsg);
-    inputField.value = ""; // clear input text field
+    inputField.value = ""; 
 
-    // Append a loading indicator
     const loadingMsg = document.createElement('div');
     loadingMsg.className = 'msg ai';
     loadingMsg.innerText = "Gemini is reflecting...";
@@ -165,9 +179,7 @@ async function submitAiQuestion() {
         });
         
         const data = await response.json();
-        
-        // Remove loading state text indicator
-        messagesContainer.removeChild(loadingMsg);
+        if (loadingMsg.parentNode) messagesContainer.removeChild(loadingMsg);
 
         const aiMsg = document.createElement('div');
         aiMsg.className = 'msg ai';
@@ -176,7 +188,7 @@ async function submitAiQuestion() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     } catch (err) {
-        if(loadingMsg.parentNode) messagesContainer.removeChild(loadingMsg);
+        if (loadingMsg.parentNode) messagesContainer.removeChild(loadingMsg);
         console.error(err);
     }
 }

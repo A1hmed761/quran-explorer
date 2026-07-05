@@ -11,12 +11,14 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 .reader-container {
     max-width: 768px; /* Classic book-width constraint for focus */
     margin: 0 auto;
     padding: 40px 20px;
+    box-sizing: border-box;
 }
 
 /* Header Styling */
@@ -45,14 +47,39 @@ body {
 .quran-grid {
     direction: rtl; /* Crucial for Right-to-Left reading flow */
     text-align: justify; /* Aligns edges beautifully like a real page */
+    position: relative;
+    user-select: none; /* Controlled selections happen via our dynamic tool */
 }
 
 .verse-block {
     display: inline; /* Allows text to flow continuously like a paragraph */
     font-family: 'Amiri', serif;
     font-size: 2.2rem;
-    line-height: 2.4; /* Huge line height prevents accent overlaps */
+    line-height: 2.5; /* Huge line height prevents accent overlaps */
     word-spacing: 4px;
+}
+
+/* Dynamic Inline Word Wrapper */
+.quran-grid span[data-word-idx] {
+    display: inline-block;
+    padding: 0 2px;
+    margin: 0 1px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+/* Selected Text Visual Highlighting Range */
+.quran-grid span[data-word-idx].active-selection {
+    background-color: rgba(197, 168, 128, 0.35) !important;
+    box-shadow: 0 0 0 2px rgba(197, 168, 128, 0.2);
+}
+
+/* "Sticks" Border Indicators */
+.quran-grid span[data-word-idx].stick-start {
+    border-right: 3px solid var(--text-ink) !important;
+}
+.quran-grid span[data-word-idx].stick-end {
+    border-left: 3px solid var(--text-ink) !important;
 }
 
 /* Beautiful End-of-Verse Number Badge */
@@ -61,24 +88,65 @@ body {
     color: var(--gold-accent);
     margin: 0 8px;
     font-family: 'Inter', sans-serif;
-    user-select: none; /* Prevents the user from accidentally highlighting the number */
+    user-select: none;
 }
 
-/* Floating Action Menu */
-.highlight-menu {
-    position: absolute;
-    display: none;
-    background: #292524;
+/* Mobile AI Controller Hub Engine Box */
+.mobile-selector-panel {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.slider-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slider-row label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 90px;
+    color: var(--text-muted);
+}
+
+.slider-row input[type="range"] {
+    flex: 1;
+    accent-color: var(--text-ink);
+    cursor: pointer;
+}
+
+/* Main Hub CTA Trigger */
+.ask-ai-trigger-btn {
+    width: 100%;
+    background: var(--text-ink);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
     border-radius: 8px;
-    padding: 4px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    z-index: 1000;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s ease;
 }
-.highlight-menu button {
-    background: none; color: #f5f5f4; border: none;
-    padding: 8px 16px; font-size: 0.9rem; cursor: pointer; font-weight: 500;
+.ask-ai-trigger-btn:hover {
+    background: #3f3a36;
 }
-.highlight-menu button:hover { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
 /* Navigation Dashboard Layout */
 .navigation-dashboard {
@@ -86,7 +154,7 @@ body {
     border: 1px solid rgba(0,0,0,0.06);
     border-radius: 12px;
     padding: 16px;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
 }
 
 .search-row {
@@ -134,7 +202,6 @@ body {
     margin: 8px 0 0 0;
 }
 
-/* Highlight matching search target yellow */
 .highlight-target {
     background-color: #fef08a;
     border-radius: 4px;
@@ -145,9 +212,8 @@ body {
 .chat-drawer {
     position: fixed;
     top: 0;
-    right: -400px; /* Hidden completely by default offscreen right */
+    right: -400px; 
     width: 380px;
-    height: 100ccc;
     height: 100vh;
     background: #ffffff;
     box-shadow: -5px 0 25px rgba(0,0,0,0.15);
@@ -157,7 +223,7 @@ body {
     z-index: 2000;
 }
 .chat-drawer.open {
-    right: 0; /* Slides into display frame */
+    right: 0; 
 }
 .chat-header {
     padding: 16px;
@@ -175,6 +241,8 @@ body {
     background: #f5f5f4;
     border-bottom: 1px solid #e7e5e4;
     font-size: 0.9rem;
+    max-height: 100px;
+    overflow-y: auto;
 }
 .chat-context p { margin: 4px 0 0 0; color: #444; font-style: italic; font-family: 'Amiri', serif; font-size: 1.2rem; direction: rtl;}
 
@@ -196,5 +264,55 @@ body {
     display: flex;
     gap: 8px;
 }
-#chatQuestionInput { flex: 1; padding: 10px; border: 1px solid #chchch; border: 1px solid #d1d5db; border-radius: 6px; }
+#chatQuestionInput { flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; }
 #sendQuestionBtn { background: #1c1917; color: white; border: none; padding: 0 16px; border-radius: 6px; cursor: pointer; }
+
+/* ==========================================
+   📱 RESPONSIVE RESPONSIVENESS MEDIA BREAKPOINTS
+   ========================================== */
+@media (max-width: 768px) {
+    .reader-container {
+        padding: 20px 12px;
+    }
+    
+    .navigation-dashboard {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .search-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .search-box-wrapper {
+        width: 100%;
+    }
+    
+    /* Fluid Responsive Optimization for Reading Texts scales */
+    #surahName {
+        font-size: 2.2rem;
+    }
+    
+    .bismillah {
+        font-size: 1.6rem;
+        margin-top: 16px;
+    }
+    
+    .verse-block {
+        font-size: 1.65rem; /* Downsized gracefully so it fits perfectly on mobile layout screens */
+        line-height: 2.3;
+        word-spacing: 2px;
+    }
+    
+    .verse-number {
+        font-size: 1.1rem;
+        margin: 0 4px;
+    }
+    
+    /* Scale the drawer fully wide for standard mobile comfort */
+    .chat-drawer {
+        width: 100%;
+        right: -100%;
+    }
+}
