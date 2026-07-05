@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>The Noble Qur'an Reader</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -10,17 +10,17 @@
 <body>
     <!-- Ask AI floating action button - shown once a surah is loaded -->
     <button id="askAiFab" class="ask-ai-fab">✨ Ask AI</button>
- 
+
     <!-- Drag handles used to pick a word range to ask about -->
     <div id="handleStart" class="selection-handle"></div>
     <div id="handleEnd" class="selection-handle"></div>
- 
+
     <!-- Confirm/cancel toolbar shown while picking text -->
     <div id="selectionToolbar" class="selection-toolbar">
         <button class="btn-cancel" onclick="cancelSelection()">Cancel</button>
         <button class="btn-confirm" onclick="confirmSelection()">Ask Gemini</button>
     </div>
- 
+
     <div id="chatDrawer" class="chat-drawer">
         <div class="chat-header">
             <h3>Study with Gemini</h3>

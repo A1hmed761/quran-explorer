@@ -6,9 +6,24 @@ const surahNames = [
 const surahSelect = document.getElementById('surahSelect');
 const smartSearchInput = document.getElementById('smartSearchInput');
 const searchBtn = document.getElementById('searchBtn');
-const menu = document.getElementById('highlightMenu');
 
-let selectedSourceText = ""; 
+// Ask AI / selection UI elements
+const askAiFab = document.getElementById('askAiFab');
+const handleStart = document.getElementById('handleStart');
+const handleEnd = document.getElementById('handleEnd');
+const selectionToolbar = document.getElementById('selectionToolbar');
+
+let selectedSourceText = "";
+
+// Flat, per-surah arrays used for word-level selection (index order = reading order)
+let wordSpans = [];
+let wordTexts = [];
+
+// Selection-mode state
+let selectionMode = false;
+let startIdx = 0;
+let endIdx = 0;
+let draggingHandle = null; // 'start' | 'end' | null
 
 // 1. Setup Dropdown Navigation Content List
 surahNames.forEach((name, idx) => {
@@ -19,7 +34,7 @@ surahNames.forEach((name, idx) => {
 });
 
 surahSelect.addEventListener('change', (e) => {
-    smartSearchInput.value = ""; 
+    smartSearchInput.value = "";
     loadLiveSurah(parseInt(e.target.value));
 });
 
@@ -48,44 +63,42 @@ async function loadLiveSurah(surahId, targetVerseNum = null) {
         document.getElementById('bismillahText').style.display = (surahId === 9 || surahId === 1) ? 'none' : 'block';
 
         const grid = document.getElementById('quranGrid');
-        grid.innerHTML = ""; 
+        grid.innerHTML = "";
+
+        // Reset word-selection tracking for the newly loaded surah
+        exitSelectionMode();
+        wordSpans = [];
+        wordTexts = [];
 
         // 🌟 DYNAMICALLY GET RULE FROM THE URL PARAMETERS
         const urlParams = new URLSearchParams(window.location.search);
         // Fallback default rule to "definite_indefinite" if none is passed in URL
-        const activeRule = urlParams.get('rule') || "definite_indefinite"; 
+        const activeRule = urlParams.get('rule') || "definite_indefinite";
 
         // Loop through your REAL MongoDB documents inside the browser
         verses.forEach(ayah => {
             const textSpan = document.createElement('span');
             textSpan.className = 'verse-block';
-            
+
             // Check if the current verse has an array of indices for this specific active rule
             const highlightIndices = (ayah.grammar_highlights && ayah.grammar_highlights[activeRule]) || null;
+            const wordsArray = ayah.text.split(" ");
 
-            if (highlightIndices) {
-                // Split the text into individual words by spaces
-                const wordsArray = ayah.text.split(" ");
-                textSpan.innerHTML = ""; // Clear plain text to append word blocks
+            wordsArray.forEach((word, index) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'qword';
+                wordSpan.innerText = word + " ";
 
-                wordsArray.forEach((word, index) => {
-                    const wordSpan = document.createElement('span');
-                    wordSpan.innerText = word + " ";
+                if (highlightIndices && highlightIndices.includes(index)) {
+                    wordSpan.classList.add('grammar-highlight');
+                }
 
-                    // Check if the current word's index matches our database highlights array
-                    if (highlightIndices.includes(index)) {
-                        wordSpan.style.backgroundColor = '#ffeb3b'; // Highlight yellow background
-                        wordSpan.style.color = '#000';              // Readable black text
-                        wordSpan.style.borderRadius = '4px';
-                        wordSpan.style.padding = '0 4px';
-                        wordSpan.style.display = 'inline-block';
-                    }
-                    textSpan.appendChild(wordSpan);
-                });
-            } else {
-                // Fallback default plain text rendering if no rule matching data array exists
-                textSpan.innerText = ayah.text;
-            }
+                textSpan.appendChild(wordSpan);
+
+                // Track every word in flat, reading-order arrays for the Ask AI selector
+                wordSpans.push(wordSpan);
+                wordTexts.push(word);
+            });
 
             const numberSpan = document.createElement('span');
             numberSpan.className = 'verse-number';
@@ -98,41 +111,159 @@ async function loadLiveSurah(surahId, targetVerseNum = null) {
             grid.appendChild(textSpan);
             grid.appendChild(numberSpan);
         });
-    } catch (err) { 
-        console.error("Error connecting to DB Stream:", err); 
+
+        // Only show the Ask AI button once there's actually text to select
+        if (wordSpans.length > 0) {
+            askAiFab.classList.add('visible');
+        } else {
+            askAiFab.classList.remove('visible');
+        }
+    } catch (err) {
+        console.error("Error connecting to DB Stream:", err);
         document.getElementById('surahName').innerText = "Server Offline";
     }
 }
 
-// 3. Floating Button Highlight Reader Track Event
-document.addEventListener('mouseup', () => {
-    const selection = window.getSelection();
-    const cleanText = selection.toString().trim();
+// ---------------------------------------------------------
+// 3. Ask AI - Drag Handle Text Selector (mouse + touch alike)
+// ---------------------------------------------------------
 
-    if (cleanText.length > 0) {
-        selectedSourceText = cleanText; 
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
+askAiFab.addEventListener('click', enterSelectionMode);
 
-        menu.style.display = 'block';
-        menu.style.left = `${rect.left + window.scrollX + (rect.width / 2) - (menu.offsetWidth / 2)}px`;
-        menu.style.top = `${rect.top + window.scrollY - menu.offsetHeight - 10}px`;
-    } else {
-        menu.style.display = 'none';
+function enterSelectionMode() {
+    if (wordSpans.length === 0) return;
+
+    selectionMode = true;
+    document.body.classList.add('selection-mode');
+    askAiFab.classList.remove('visible');
+    selectionToolbar.classList.add('visible');
+    handleStart.classList.add('active');
+    handleEnd.classList.add('active');
+
+    // Default to a small chunk of text around whatever is currently in view,
+    // so the user has something sensible to immediately drag from.
+    const anchorIdx = findFirstVisibleWordIdx();
+    startIdx = anchorIdx;
+    endIdx = Math.min(wordSpans.length - 1, anchorIdx + 3);
+
+    updateSelectionHighlight();
+    positionHandles();
+}
+
+function findFirstVisibleWordIdx() {
+    const vh = window.innerHeight;
+    for (let i = 0; i < wordSpans.length; i++) {
+        const rect = wordSpans[i].getBoundingClientRect();
+        if (rect.top >= 0 && rect.top < vh) return i;
     }
+    return 0;
+}
+
+function updateSelectionHighlight() {
+    const lo = Math.min(startIdx, endIdx);
+    const hi = Math.max(startIdx, endIdx);
+    wordSpans.forEach((span, i) => {
+        span.classList.toggle('selected', i >= lo && i <= hi);
+    });
+}
+
+function positionHandles() {
+    if (!wordSpans[startIdx] || !wordSpans[endIdx]) return;
+    const startRect = wordSpans[startIdx].getBoundingClientRect();
+    const endRect = wordSpans[endIdx].getBoundingClientRect();
+
+    handleStart.style.left = `${startRect.left + startRect.width / 2 - 13}px`;
+    handleStart.style.top = `${startRect.top - 8}px`;
+
+    handleEnd.style.left = `${endRect.left + endRect.width / 2 - 13}px`;
+    handleEnd.style.top = `${endRect.bottom - 18}px`;
+}
+
+function nearestWordIdx(x, y) {
+    let closest = 0;
+    let minDist = Infinity;
+    wordSpans.forEach((span, i) => {
+        const r = span.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dist = Math.hypot(cx - x, cy - y);
+        if (dist < minDist) {
+            minDist = dist;
+            closest = i;
+        }
+    });
+    return closest;
+}
+
+function attachHandleDrag(handleEl, isStart) {
+    const tag = isStart ? 'start' : 'end';
+
+    handleEl.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        draggingHandle = tag;
+        handleEl.setPointerCapture(e.pointerId);
+    });
+
+    handleEl.addEventListener('pointermove', (e) => {
+        if (draggingHandle !== tag) return;
+        const idx = nearestWordIdx(e.clientX, e.clientY);
+        if (isStart) startIdx = idx; else endIdx = idx;
+        updateSelectionHighlight();
+        positionHandles();
+    });
+
+    handleEl.addEventListener('pointerup', () => { draggingHandle = null; });
+    handleEl.addEventListener('pointercancel', () => { draggingHandle = null; });
+}
+
+attachHandleDrag(handleStart, true);
+attachHandleDrag(handleEnd, false);
+
+// Keep handles glued to their words while scrolling in selection mode
+window.addEventListener('scroll', () => {
+    if (selectionMode) positionHandles();
+}, { passive: true });
+
+window.addEventListener('resize', () => {
+    if (selectionMode) positionHandles();
 });
 
-// 4. Interactive Sidebar Interface Actions
-function openAiChat() {
+function cancelSelection() {
+    exitSelectionMode();
+}
+
+function confirmSelection() {
+    const lo = Math.min(startIdx, endIdx);
+    const hi = Math.max(startIdx, endIdx);
+    const text = wordTexts.slice(lo, hi + 1).join(' ');
+    exitSelectionMode();
+    openAiChat(text);
+}
+
+function exitSelectionMode() {
+    selectionMode = false;
+    draggingHandle = null;
+    document.body.classList.remove('selection-mode');
+    handleStart.classList.remove('active');
+    handleEnd.classList.remove('active');
+    selectionToolbar.classList.remove('visible');
+    wordSpans.forEach(span => span.classList.remove('selected'));
+    if (wordSpans.length > 0) askAiFab.classList.add('visible');
+}
+
+// ---------------------------------------------------------
+// 4. Study with Gemini - Sidebar Chat Panel
+// ---------------------------------------------------------
+
+function openAiChat(text) {
+    selectedSourceText = text;
     document.getElementById('contextTextPreview').innerText = selectedSourceText;
     document.getElementById('chatMessages').innerHTML = ""; // Clear old message chains
     document.getElementById('chatDrawer').classList.add('open');
-    menu.style.display = 'none';
 }
 
 function closeAiChat() {
     document.getElementById('chatDrawer').classList.remove('open');
-    window.getSelection().removeAllRanges();
 }
 
 // 5. Submit Conversation Stream directly to Gemini Endpoint
@@ -163,9 +294,9 @@ async function submitAiQuestion() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sourceText: selectedSourceText, question: questionText })
         });
-        
+
         const data = await response.json();
-        
+
         // Remove loading state text indicator
         messagesContainer.removeChild(loadingMsg);
 
@@ -176,7 +307,7 @@ async function submitAiQuestion() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     } catch (err) {
-        if(loadingMsg.parentNode) messagesContainer.removeChild(loadingMsg);
+        if (loadingMsg.parentNode) messagesContainer.removeChild(loadingMsg);
         console.error(err);
     }
 }

@@ -205,7 +205,7 @@ body {
 
 .ask-ai-fab {
     position: fixed;
-    bottom: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     right: 24px;
     background: linear-gradient(135deg, #c5a880, #a9895f);
     color: #1c1917;
@@ -248,7 +248,7 @@ body {
 
 .selection-toolbar {
     position: fixed;
-    bottom: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     left: 50%;
     transform: translateX(-50%);
     background: #1c1917;
@@ -300,8 +300,8 @@ body.selection-mode .quran-grid {
 
     .chat-drawer { width: 100%; right: -100%; }
 
-    .ask-ai-fab { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 0.9rem; }
-    .selection-toolbar { bottom: 16px; padding: 6px; }
+    .ask-ai-fab { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: 16px; padding: 12px 18px; font-size: 0.9rem; }
+    .selection-toolbar { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding: 6px; }
     .selection-toolbar button { padding: 9px 14px; font-size: 0.85rem; }
 }
 
