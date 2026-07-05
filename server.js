@@ -10,6 +10,9 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json()); 
 
+// 🌟 ADD THIS LINE RIGHT HERE:
+app.use(express.static('public'));
+
 // 1. Production Database Configuration
 // Uses the Atlas Cloud URI if live, falls back to local machine if testing locally
 const url = process.env.MONGODB_URI || 'mongodb://localhost:27017';

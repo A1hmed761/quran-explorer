@@ -36,7 +36,7 @@ function handleVerseJump() {
 // 2. Load Surah from Local MongoDB with Highlight Integration
 async function loadLiveSurah(surahId, targetVerseNum = null) {
     try {
-        const response = await fetch(`http://localhost:5000/api/surah/${surahId}`);
+        const response = await fetch(`/api/surah/${surahId}`);
         const result = await response.json();
         if (!result.success) return;
 
@@ -158,7 +158,7 @@ async function submitAiQuestion() {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     try {
-        const response = await fetch('http://localhost:5000/api/ask', {
+        const response = await fetch('/api/ask', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sourceText: selectedSourceText, question: questionText })
