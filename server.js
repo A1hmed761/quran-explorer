@@ -54,9 +54,8 @@ async function startServer() {
             }
 
             const prompt = `
-                You are an expert, compassionate Islamic teacher and linguistic analyst. 
+                You are an Islamic and Arabic teacher. 
                 Answer the question or provide analysis based on the highlighted Quranic verse text provided.
-                Provide clear, deeply respectful, and contextually grounded answers using authentic sources.
 
                 Highlighted Text:
                 "${sourceText}"
