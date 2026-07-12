@@ -149,6 +149,7 @@ body {
     right: -400px; /* Hidden completely by default offscreen right */
     width: 380px;
     height: 100vh;
+    height: 100dvh; /* dynamic viewport height - accounts for mobile address bar/keyboard */
     background: #ffffff;
     box-shadow: -5px 0 25px rgba(0,0,0,0.15);
     transition: right 0.3s ease-in-out;
@@ -166,6 +167,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 }
 .chat-header h3 { margin: 0; font-size: 1.1rem; font-weight: 500; }
 .close-btn { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
@@ -175,13 +177,16 @@ body {
     background: #f5f5f4;
     border-bottom: 1px solid #e7e5e4;
     font-size: 0.9rem;
+    flex-shrink: 0;
 }
 .chat-context p { margin: 4px 0 0 0; color: #444; font-style: italic; font-family: 'Amiri', serif; font-size: 1.2rem; direction: rtl;}
 
 .chat-messages {
     flex: 1;
+    min-height: 0; /* THE key fix - without this, flex children won't shrink/scroll, they overflow the visible area instead */
     padding: 16px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -192,9 +197,11 @@ body {
 
 .chat-input-area {
     padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid #e7e5e4;
     display: flex;
     gap: 8px;
+    flex-shrink: 0;
 }
 #chatQuestionInput { flex: 1; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; }
 #sendQuestionBtn { background: #1c1917; color: white; border: none; padding: 0 16px; border-radius: 6px; cursor: pointer; }
@@ -291,14 +298,44 @@ body.selection-mode .quran-grid {
     #surahName { font-size: 2rem; }
     .bismillah { font-size: 1.4rem; margin-top: 16px; }
 
-    .verse-block { font-size: 1.55rem; line-height: 2.3; word-spacing: 2px; }
+    /* Reduced line-height and word-spacing - main fix for the excessive gap between ayahs on mobile */
+    .verse-block { font-size: 1.55rem; line-height: 1.9; word-spacing: 1px; }
     .verse-number { font-size: 1.05rem; margin: 0 4px; }
 
     .navigation-dashboard { padding: 12px; }
     .search-row { flex-direction: column; }
     .search-box-wrapper { flex-direction: row; }
 
-    .chat-drawer { width: 100%; right: -100%; }
+    /* Chat drawer takes the full screen on mobile, uses dvh so keyboard/address bar don't clip content */
+    .chat-drawer {
+        width: 100%;
+        right: -100%;
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    .chat-header {
+        padding: 12px 16px;
+    }
+
+    /* Selected-text preview was eating vertical space that chat-messages needed - cap and scroll it instead */
+    .chat-context {
+        padding: 8px 16px;
+        max-height: 70px;
+        overflow-y: auto;
+    }
+    .chat-context p {
+        font-size: 1rem;
+    }
+
+    .chat-messages {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .chat-input-area {
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    }
 
     .ask-ai-fab { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: 16px; padding: 12px 18px; font-size: 0.9rem; }
     .selection-toolbar { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding: 6px; }
@@ -306,6 +343,6 @@ body.selection-mode .quran-grid {
 }
 
 @media (max-width: 400px) {
-    .verse-block { font-size: 1.35rem; line-height: 2.2; }
+    .verse-block { font-size: 1.35rem; line-height: 1.85; }
     #surahName { font-size: 1.7rem; }
 }
