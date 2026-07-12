@@ -76,7 +76,7 @@ body {
 .verse-number {
     font-size: 1.4rem;
     color: var(--gold-accent);
-    margin: 0 8px;
+    margin: 0 2px 0 10px; /* tight on the right (next to last word), more room on the left (before next verse starts) */
     font-family: 'Inter', sans-serif;
     user-select: none; /* Prevents the user from accidentally highlighting the number */
 }
@@ -300,7 +300,7 @@ body.selection-mode .quran-grid {
 
     /* Reduced line-height and word-spacing - main fix for the excessive gap between ayahs on mobile */
     .verse-block { font-size: 1.55rem; line-height: 1.9; word-spacing: 1px; }
-    .verse-number { font-size: 1.05rem; margin: 0 4px; }
+    .verse-number { font-size: 1.05rem; margin: 0 2px 0 8px; }
 
     .navigation-dashboard { padding: 12px; }
     .search-row { flex-direction: column; }
