@@ -70,10 +70,9 @@ async function loadLiveSurah(surahId, targetVerseNum = null) {
         wordSpans = [];
         wordTexts = [];
 
-        // 🌟 DYNAMICALLY GET RULE FROM THE URL PARAMETERS
+        // 🌟 DYNAMICALLY GET RULE FROM THE URL PARAMETERS (No default fallback rule)
         const urlParams = new URLSearchParams(window.location.search);
-        // Fallback default rule to "definite_indefinite" if none is passed in URL
-        const activeRule = urlParams.get('rule') || "definite_indefinite";
+        const activeRule = urlParams.get('rule'); 
 
         // Loop through your REAL MongoDB documents inside the browser
         verses.forEach(ayah => {
@@ -81,7 +80,7 @@ async function loadLiveSurah(surahId, targetVerseNum = null) {
             textSpan.className = 'verse-block';
 
             // Check if the current verse has an array of indices for this specific active rule
-            const highlightIndices = (ayah.grammar_highlights && ayah.grammar_highlights[activeRule]) || null;
+            const highlightIndices = (activeRule && ayah.grammar_highlights && ayah.grammar_highlights[activeRule]) || null;
             const wordsArray = ayah.text.split(" ");
 
             wordsArray.forEach((word, index) => {
