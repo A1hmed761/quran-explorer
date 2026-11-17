@@ -21,21 +21,45 @@
         <button class="btn-confirm" onclick="confirmSelection()">Ask Gemini</button>
     </div>
 
+    <!-- Upgraded Professional Chat Drawer -->
     <div id="chatDrawer" class="chat-drawer">
         <div class="chat-header">
-            <h3>Study with Gemini</h3>
+            <div class="chat-header-title">
+                <span class="ai-avatar-badge">✨</span>
+                <div>
+                    <h3>Study with Gemini</h3>
+                    <span class="chat-status"><span class="status-dot"></span> Online</span>
+                </div>
+            </div>
             <button class="close-btn" onclick="closeAiChat()">✕</button>
         </div>
+        
         <div class="chat-context">
-            <strong>Selected Text:</strong>
+            <div class="context-label">
+                <span>Selected Text Reference</span>
+            </div>
             <p id="contextTextPreview"></p>
         </div>
-        <div id="chatMessages" class="chat-messages"></div>
+
+        <div id="chatMessages" class="chat-messages">
+            <div class="msg ai welcome-msg">
+                <div class="msg-content">
+                    Assalamu alaykum! Select any phrase or verse from the text, and I'll help you explore its translation, grammar, and context.
+                </div>
+            </div>
+        </div>
+
         <div class="chat-input-area">
-            <input type="text" id="chatQuestionInput" placeholder="Ask about this selection...">
-            <button id="sendQuestionBtn" onclick="submitAiQuestion()">Send</button>
+            <div class="input-wrapper">
+                <input type="text" id="chatQuestionInput" placeholder="Ask about this selection..." onkeydown="if(event.key === 'Enter') submitAiQuestion()">
+                <button id="sendQuestionBtn" onclick="submitAiQuestion()" title="Send message">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+            <span class="input-footer-hint">Gemini may display inaccurate info. Verify important notes.</span>
         </div>
     </div>
+
     <main class="reader-container">
         <section class="navigation-dashboard">
             <div class="search-row">
